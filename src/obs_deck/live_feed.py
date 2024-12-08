@@ -10,7 +10,7 @@ class LiveFeedPanel:
         # Create frame
         self.frame = tk.Label(parent)
 
-        # figure out live feed, no children, maybe scale bar tab
+        # Set up the video capture
         self.vid = cv2.VideoCapture(1)
         self.vid_label = tk.Label(self.frame)
 
@@ -35,8 +35,12 @@ class LiveFeedPanel:
                 new_width = frame_width
                 new_height = int(new_width / aspect_ratio)
 
-                if new_height > 0:
+                # Cap the height to 400 pixels
+                if new_height > 400:
+                    new_height = 400
+                    new_width = int(new_height * aspect_ratio)
 
+                if new_height > 0:
                     # Resize the frame
                     resized_frame = cv2.flip(cv2.resize(frame_rgb, (new_width, new_height)), 1)
 
