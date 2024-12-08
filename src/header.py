@@ -15,9 +15,19 @@ class Header:
         self.logo = tk.Label(self.frame, image=self.logo_img)
 
         # Tabs label
-        self.tabs = tk.Label(self.frame, background='red')
+        self.tabs = tk.Frame(self.frame)
+        self.obs_deck_tab = tk.Button(self.tabs, text='Observation Deck')
+        self.cam_setting_tab = tk.Button(self.tabs, text='Camera Settings')
+        self.experiment_setup_tab = tk.Button(self.tabs, text='Experiment Setup')
+        self.system_properties_tab = tk.Button(self.tabs, text='System Properties')
+        self.post_processing_tab = tk.Button(self.tabs, text='Post-Processing')
 
     def render(self):
         self.logo.pack(side='left')
+        self.obs_deck_tab.pack(side='left', fill='both', expand=True)
+        self.cam_setting_tab.pack(side='left', fill='both', expand=True)
+        self.experiment_setup_tab.pack(side='left', fill='both', expand=True)
+        self.system_properties_tab.pack(side='left', fill='both', expand=True)
+        self.post_processing_tab.pack(side='left', fill='both', expand=True)
         self.tabs.pack(side='left', fill='both', expand=True)
         self.frame.pack(fill='both')

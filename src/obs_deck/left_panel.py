@@ -2,7 +2,7 @@
 import tkinter as tk
 from obs_deck.control_panel.active_cam import ActiveCamPanel
 from obs_deck.control_panel.experiment import ExperimentPanel
-from obs_deck.control_panel.file import FilePanel
+from obs_deck.control_panel.capture import CapturePanel
 
 class LeftPanel:
     frame: tk.Frame
@@ -18,11 +18,11 @@ class LeftPanel:
         self.experiment_panel = ExperimentPanel(self.frame)
 
         # File control
-        self.file_panel = FilePanel(self.frame)
+        self.capture_panel = CapturePanel(self.frame)
 
 
     def render(self):
         self.active_cam_panel.render()
         self.experiment_panel.render()
-        self.file_panel.render()
+        self.capture_panel.render()
         self.frame.pack(side='left', fill='both')
