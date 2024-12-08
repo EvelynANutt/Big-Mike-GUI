@@ -1,34 +1,25 @@
 import tkinter as tk
 from PIL import ImageTk, Image
-import os
 
-def on_click():
-    print("YEEEEEEEEEEEEEEEEAAAAAH")
+from header import Header
+from obs_deck.body import Body
 
 def main():
-    # Create the main window
-    root = tk.Tk()
+    # Create the main window & size
+    window = tk.Tk()
+    window.title('Big Mike GUI')
+    window.geometry('600x400')
     
-    # Create a label widget
-    label = tk.Label(root, text='Observation Deck')
-    label.place(relx=0.5,
-                rely=0.5,
-                anchor='n')
+    # Create the header
+    header = Header(window)
+    header.render()
 
-    # Load the logo image
-    logo = Image.open('/Users/evelynanutt/GitHub/Big-Mike-GUI/src/bigmike_logo.png')
-    resize_logo = logo.resize((200,200))
-    logo_img = ImageTk.PhotoImage(resize_logo)
-    # Read the logo image
-    logo_panel = tk.Label(root, image=logo_img)
-    logo_panel.place(anchor='nw')
-
-    # Create a button
-    button = tk.Button(root, text="Click me!", command=on_click)
-    button.place(anchor='ne')
+    # Create the body
+    body = Body(window)
+    body.render()
     
     # Start the GUI event loop
-    root.mainloop()
+    window.mainloop()
 
 if __name__ == "__main__":
     main()
