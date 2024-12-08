@@ -8,7 +8,7 @@ def main():
     # Create the main window & size
     window = tk.Tk()
     window.title('Big Mike GUI')
-    window.geometry('1000x800')
+    window.geometry('1200x800')
     
     # Create the header
     header = Header(window)
