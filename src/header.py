@@ -21,7 +21,7 @@ class Header:
         self.experiment_setup_tab = tk.Button(self.tabs, text='Experiment Setup')
         self.system_properties_tab = tk.Button(self.tabs, text='System Properties')
         self.post_processing_tab = tk.Button(self.tabs, text='Post-Processing')
-
+        
     def render(self):
         self.logo.pack(side='left')
         self.obs_deck_tab.pack(side='left', fill='both', expand=True)

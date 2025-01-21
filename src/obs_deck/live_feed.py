@@ -16,6 +16,9 @@ class LiveFeedPanel:
 
         self.update()
 
+    """ At some point here, I want to enable some cropping stuff, 
+    but it's not entirely urgent """
+   
     def render(self):
         self.vid_label.pack(fill='both', expand=True)
         self.frame.pack(fill='both')
