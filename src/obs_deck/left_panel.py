@@ -1,8 +1,9 @@
-""" Active cam + experiment + quick file control """
+""" Stage + experiment + quick file control """
 import tkinter as tk
-from obs_deck.control_panel.active_cam import ActiveCamPanel
-from obs_deck.control_panel.experiment import ExperimentPanel
+from obs_deck.control_panel.stage_controls import StageControlPanel
 from obs_deck.control_panel.capture import CapturePanel
+from obs_deck.control_panel.cam_settings import CameraSettingsPanel
+# from obs_deck.control_panel.experiment import ExperimentPanel
 
 class LeftPanel:
     frame: tk.Frame
@@ -11,18 +12,22 @@ class LeftPanel:
         # Create frame
         self.frame = tk.Label(parent)
 
-        # Active cam control
-        self.active_cam_panel = ActiveCamPanel(self.frame)
-
-        # Experiment control
-        self.experiment_panel = ExperimentPanel(self.frame)
+        # Stage control
+        self.stage_control_panel = StageControlPanel(self.frame)
 
         # File control
         self.capture_panel = CapturePanel(self.frame)
 
+        # Camera settings
+        self.camera_settings_panel = CameraSettingsPanel(self.frame)
+
+        # Experiment control
+        # self.experiment_panel = ExperimentPanel(self.frame)
+
 
     def render(self):
-        self.active_cam_panel.render()
-        self.experiment_panel.render()
+        self.stage_control_panel.render()
         self.capture_panel.render()
+        self.camera_settings_panel.render()
+        # self.experiment_panel.render()
         self.frame.pack(side='left', fill='both')

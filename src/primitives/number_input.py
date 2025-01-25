@@ -6,6 +6,9 @@ class NumberInput:
     frame: tk.Frame
     title: str
     
+    def edit_num_entry():
+        print (1 + 1)
+
     def __init__(self, parent, title, command_plus: Callable, command_minus: Callable):
         # Create frame
         self.frame = tk.Label(parent)

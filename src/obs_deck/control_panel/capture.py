@@ -15,7 +15,7 @@ class CapturePanel:
         # Take picture and take video buttons
         self.picture_button = tk.Button(self.frame, text='Take Picture', font=('Aria',20))
         self.video_button = tk.Button(self.frame, text='Take Video', font=('Aria',20))
-        self.video_time_name = tk.Label(self.frame, text='Video Time: ', font=('Aria', 16))
+        # self.video_time_name = tk.Label(self.frame, text='Video Time: ', font=('Aria', 16))
         # self.video_timestamp = 
         """ When the picture button is pressed, I want to take a picture of the
         live video feed, then prompt the user to determine the file name and destination """
@@ -29,5 +29,5 @@ class CapturePanel:
         self.header.pack(fill='x')
         self.picture_button.pack(fill='x')
         self.video_button.pack(fill='x')
-        self.video_time_name.pack(anchor='w')
+        # self.video_time_name.pack(anchor='w')
         self.frame.pack(fill='both')
