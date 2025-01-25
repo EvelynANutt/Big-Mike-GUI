@@ -23,6 +23,7 @@ class CapturePanel:
         how many photos will be taken and the time incremements for the photos,
         and prompt the user to determine the file name and destination """
         """ When the video is done being rendered, I want to notify the user """
+        """ When the video is being taken, disable the picture and video buttons"""
 
     def render(self):
         self.title.pack(expand=True)

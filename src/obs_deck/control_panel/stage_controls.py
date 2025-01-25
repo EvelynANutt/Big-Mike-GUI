@@ -5,31 +5,17 @@ from primitives.number_input import NumberInput
 class StageControlPanel:
     frame: tk.Frame
 
-    def x_up(self):
-        new_value = float(self.x_trans_input.value.get()) + 1
-        self.x_trans_input.value.set(str(new_value))
+    def command_set_x(self):
+        print(self.x_trans_input.value.get())
         # Put attocube control code here!
-        # include e.get() here? from entry
 
-    def x_down(self):
-        new_value = float(self.x_trans_input.value.get()) - 1
-        self.x_trans_input.value.set(str(new_value))
-
-    def y_up(self):
-        new_value = float(self.y_trans_input.value.get()) + 1
-        self.y_trans_input.value.set(str(new_value))
-
-    def y_down(self):
-        new_value = float(self.y_trans_input.value.get()) - 1
-        self.y_trans_input.value.set(str(new_value))
-
-    def z_up(self):
-        new_value = float(self.z_trans_input.value.get()) + 1
-        self.z_trans_input.value.set(str(new_value))
-
-    def z_down(self):
-        new_value = float(self.z_trans_input.value.get()) - 1
-        self.z_trans_input.value.set(str(new_value))
+    def command_set_y(self):
+        print(self.y_trans_input.value.get())
+        # Put attocube control code here!
+            
+    def command_set_z(self):
+        print(self.z_trans_input.value.get())
+        # Put attocube control code here!
 
     def __init__(self, parent):
         # Create frame
@@ -40,9 +26,9 @@ class StageControlPanel:
         self.title = tk.Label(self.header, text='Stage Controls', font=('Aria',26))
 
         # xyz translation and xy cropping names
-        self.x_trans_input = NumberInput(self.frame, title='x [um]', command_plus=self.x_up, command_minus=self.x_down)
-        self.y_trans_input = NumberInput(self.frame, title='y [um]', command_plus=self.y_up, command_minus=self.y_down)
-        self.z_trans_input = NumberInput(self.frame, title='z [um]', command_plus=self.z_up, command_minus=self.z_down)
+        self.x_trans_input = NumberInput(self.frame, title='x [um]', command_set=self.command_set_x)
+        self.y_trans_input = NumberInput(self.frame, title='y [um]', command_set=self.command_set_y)
+        self.z_trans_input = NumberInput(self.frame, title='z [um]', command_set=self.command_set_z)
 
     def render(self):
         self.title.pack(side='left', expand=True)
