@@ -1,10 +1,32 @@
 """ File control """
 import tkinter as tk
+from tkinter import messagebox
+from tkinter import filedialog
+import cv2
+from PIL import Image
+from business.store import Store
 
 class CapturePanel:
     frame: tk.Frame
 
-    def __init__(self, parent):
+    def picture_popup(self):
+        try:
+            # Convert latest frame as BGR -> RBG -> .png
+            image_rgb = cv2.cvtColor(self.store.camera.get_frame(), cv2.COLOR_BGR2RGB)
+            image_png = Image.fromarray(image_rgb)
+            # Prompt save as window
+            file_path = filedialog.asksaveasfilename(initialfile="Untitled", defaultextension='.png')
+            image_png.save(file_path)
+        except ValueError as e:
+            print(f"Error: {e}")
+
+    def video_popup(self):
+        messagebox.showinfo("File Management", "Save video as...")
+
+    def __init__(self, parent, store: Store):
+        # Store the store
+        self.store = store
+        
         # Create frame
         self.frame = tk.Label(parent, borderwidth=5, relief='solid')
 
@@ -13,10 +35,11 @@ class CapturePanel:
         self.title = tk.Label(self.header, text='Capture', font=('Aria',26))
 
         # Take picture and take video buttons
-        self.picture_button = tk.Button(self.frame, text='Take Picture', font=('Aria',20))
-        self.video_button = tk.Button(self.frame, text='Take Video', font=('Aria',20))
+        self.picture_button = tk.Button(self.frame, text='Take Picture', font=('Aria',20), command=self.picture_popup)
+        self.video_button = tk.Button(self.frame, text='Take Video', font=('Aria',20), command=self.video_popup)
         # self.video_time_name = tk.Label(self.frame, text='Video Time: ', font=('Aria', 16))
         # self.video_timestamp = 
+
         """ When the picture button is pressed, I want to take a picture of the
         live video feed, then prompt the user to determine the file name and destination """
         """ When the video button is pressed, I want to prompt the user to determine

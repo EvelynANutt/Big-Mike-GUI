@@ -17,7 +17,10 @@ class StageControlPanel:
         print(self.z_trans_input.value.get())
         # Put attocube control code here!
 
-    def __init__(self, parent):
+    def __init__(self, parent, store):
+        # Store the store
+        self.store = store
+        
         # Create frame
         self.frame = tk.Label(parent, borderwidth=5, relief='solid')
 

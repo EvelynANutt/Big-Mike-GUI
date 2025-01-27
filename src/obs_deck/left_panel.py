@@ -8,21 +8,24 @@ from obs_deck.control_panel.cam_settings import CameraSettingsPanel
 class LeftPanel:
     frame: tk.Frame
 
-    def __init__(self, parent):
+    def __init__(self, parent, store):
+        # Store the store
+        self.store = store
+
         # Create frame
         self.frame = tk.Label(parent)
 
         # Stage control
-        self.stage_control_panel = StageControlPanel(self.frame)
+        self.stage_control_panel = StageControlPanel(self.frame, store)
 
         # File control
-        self.capture_panel = CapturePanel(self.frame)
+        self.capture_panel = CapturePanel(self.frame, store)
 
         # Camera settings
-        self.camera_settings_panel = CameraSettingsPanel(self.frame)
+        self.camera_settings_panel = CameraSettingsPanel(self.frame, store)
 
         # Experiment control
-        # self.experiment_panel = ExperimentPanel(self.frame)
+        # self.experiment_panel = ExperimentPanel(self.frame, store)
 
 
     def render(self):

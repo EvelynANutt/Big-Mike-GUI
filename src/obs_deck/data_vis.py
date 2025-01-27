@@ -18,7 +18,10 @@ class DataVisPanel:
         self.clear_content_frame()
         self.histogram.render()
 
-    def __init__(self, parent):
+    def __init__(self, parent, store):
+        # Store the store
+        self.store = store
+        
         # Create frame
         self.frame = tk.Label(parent)
         self.tabs = tk.Frame(self.frame)
@@ -33,7 +36,7 @@ class DataVisPanel:
 
         # Data vis renders
         self.focus_stab = tk.Label(self.content_frame, text="TBD")
-        self.histogram = Histogram(self.content_frame)
+        self.histogram = Histogram(self.content_frame, store)
 
     def render(self):
         self.focus_stab_tab.pack(side='left', fill='x', expand=True)

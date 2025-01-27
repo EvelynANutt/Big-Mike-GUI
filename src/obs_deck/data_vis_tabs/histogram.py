@@ -8,10 +8,13 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import threading
 
 class Histogram:
-    def __init__(self, parent):
+    def __init__(self, parent, store):
+        # Store the store
+        self.store = store
+        
         self.frame = tk.Frame(parent, background="pink")
 
-        # Initialize the camera
+        # Initialize the camera -- THIS IS BAD. FIX IT!
         self.cap = cv2.VideoCapture(1)
         if not self.cap.isOpened():
             print("Error: Unable to access the camera.")
