@@ -19,9 +19,24 @@ class CapturePanel:
             image_png.save(file_path)
         except ValueError as e:
             print(f"Error: {e}")
+    
+    def play_video(self):
+        # Create video
+        resolution = (1920, 1080)
+        codec = cv2.VideoWriter_fourcc(*"XVID")
+        filename = "Recording.avi"
+        # Specify frames rate
+        fps = 60.0
+        self.video = cv2.VideoWriter(filename, codec, fps, resolution)
+        self.store.camera.subscribe(self.record)
+    
+    def stop_video(self):
+        self.store.camera.unsubscribe(self.record)
 
-    def video_popup(self):
-        messagebox.showinfo("File Management", "Save video as...")
+    def record(self, frame):
+        # Creating a VideoWriter object
+        frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+        self.video.write(frame)
 
     def __init__(self, parent, store: Store):
         # Store the store
@@ -36,7 +51,9 @@ class CapturePanel:
 
         # Take picture and take video buttons
         self.picture_button = tk.Button(self.frame, text='Take Picture', font=('Aria',20), command=self.picture_popup)
-        self.video_button = tk.Button(self.frame, text='Take Video', font=('Aria',20), command=self.video_popup)
+        self.video_title = tk.Label(self.frame, text='Take Video: ', font=('Aria',20))
+        self.play_button = tk.Button(self.frame, text='▶', font=('Aria',16), command=self.play_video)
+        self.stop_button = tk.Button(self.frame, text='⏹', font=('Aria',18), command=self.stop_video)
         # self.video_time_name = tk.Label(self.frame, text='Video Time: ', font=('Aria', 16))
         # self.video_timestamp = 
 
@@ -52,6 +69,8 @@ class CapturePanel:
         self.title.pack(expand=True)
         self.header.pack(fill='x')
         self.picture_button.pack(fill='x')
-        self.video_button.pack(fill='x')
+        self.video_title.pack(side='left', fill='both', expand=True)
+        self.play_button.pack(side='left', fill='both', expand=True)
+        self.stop_button.pack(side='left', fill='both', expand=True)
         # self.video_time_name.pack(anchor='w')
         self.frame.pack(fill='both')

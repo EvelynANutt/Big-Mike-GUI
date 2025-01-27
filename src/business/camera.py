@@ -1,5 +1,5 @@
 import cv2
-from threading import Thread, Event
+from threading import Thread, Event, Lock
 from typing import Callable
 
 class Camera:
@@ -8,7 +8,8 @@ class Camera:
         if not self.vid.isOpened():
             print("Error: Unable to access the camera.")
         self.current_frame = None
-        self.subscriptions = []
+        self.subscriptions = set()
+        self.lock = Lock()  # Lock for thread-safe access to subscriptions
         self.running = Event()
         self.running.set()
 
@@ -21,11 +22,18 @@ class Camera:
             ret, frame = self.vid.read()
             if ret:
                 self.current_frame = frame
-                for subscription in self.subscriptions:
-                    subscription(frame)
+                # Safely iterate through subscriptions with the lock
+                with self.lock:
+                    for subscription in self.subscriptions:
+                        subscription(frame)
 
     def subscribe(self, callback: Callable):
-        self.subscriptions.append(callback)
+        with self.lock:  # Lock access to the subscriptions set
+            self.subscriptions.add(callback)
+
+    def unsubscribe(self, callback: Callable):
+        with self.lock:  # Lock access to the subscriptions set
+            self.subscriptions.remove(callback)
 
     def get_frame(self):
         if self.current_frame is not None:
