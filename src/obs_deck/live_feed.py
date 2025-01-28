@@ -30,9 +30,9 @@ class LiveFeedPanel:
             new_width = frame_width
             new_height = int(new_width / aspect_ratio)
 
-            # Cap the height to 400 pixels
+            # Cap the height to 450 pixels
             if new_height > 400:
-                new_height = 400
+                new_height = 450
                 new_width = int(new_height * aspect_ratio)
 
             if new_height > 0:

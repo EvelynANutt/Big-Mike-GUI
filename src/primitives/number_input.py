@@ -54,6 +54,6 @@ class NumberInput:
         self.minus_button.pack(side='left')
         self.number_entry.pack(side='left')
         self.plus_button.pack(side='left')
-        self.title_label.pack(side='left')
+        self.title_label.pack(side='left', expand=True)
         self.frame.pack(fill='x', expand=True)
     

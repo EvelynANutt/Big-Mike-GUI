@@ -1,6 +1,5 @@
 """ File control """
 import tkinter as tk
-from tkinter import messagebox
 from tkinter import filedialog
 import cv2
 from PIL import Image
@@ -50,10 +49,9 @@ class CapturePanel:
         self.title = tk.Label(self.header, text='Capture', font=('Aria',26))
 
         # Take picture and take video buttons
-        self.picture_button = tk.Button(self.frame, text='Take Picture', font=('Aria',20), command=self.picture_popup)
-        self.video_title = tk.Label(self.frame, text='Take Video: ', font=('Aria',20))
-        self.play_button = tk.Button(self.frame, text='▶', font=('Aria',16), command=self.play_video)
-        self.stop_button = tk.Button(self.frame, text='⏹', font=('Aria',18), command=self.stop_video)
+        self.picture_button = tk.Button(self.frame, text='📷', font=('Aria',24), command=self.picture_popup)
+        self.play_button = tk.Button(self.frame, text='▶', font=('Aria',24), command=None) #self.play_video)
+        self.stop_button = tk.Button(self.frame, text='⏹', font=('Aria',24), command=None) #self.stop_video)
         # self.video_time_name = tk.Label(self.frame, text='Video Time: ', font=('Aria', 16))
         # self.video_timestamp = 
 
@@ -68,8 +66,7 @@ class CapturePanel:
     def render(self):
         self.title.pack(expand=True)
         self.header.pack(fill='x')
-        self.picture_button.pack(fill='x')
-        self.video_title.pack(side='left', fill='both', expand=True)
+        self.picture_button.pack(side='left', fill='both', expand=True)
         self.play_button.pack(side='left', fill='both', expand=True)
         self.stop_button.pack(side='left', fill='both', expand=True)
         # self.video_time_name.pack(anchor='w')

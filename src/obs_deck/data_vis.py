@@ -28,11 +28,11 @@ class DataVisPanel:
         self.content_frame = tk.Frame(self.frame)
 
         # Data vis tabs
-        self.focus_stab_tab = tk.Button(self.tabs, text='Focus Stabilization', command=self.render_focus_stab)
-        self.histogram_tab = tk.Button(self.tabs, text='Histogram', command=self.render_histogram)
-        self.battery_tab = tk.Button(self.tabs, text='Battery Stats')
-        self.psf_tab = tk.Button(self.tabs, text='Point Spread Function')
-        self.confocal_tab = tk.Button(self.tabs, text='Confocal Rendering')
+        self.focus_stab_tab = tk.Button(self.tabs, text='Focus Stabilization', font=('Aria',18), command=self.render_focus_stab)
+        self.histogram_tab = tk.Button(self.tabs, text='Histogram', font=('Aria',18), command=self.render_histogram)
+        self.battery_tab = tk.Button(self.tabs, text='Battery Stats', font=('Aria',18),)
+        self.psf_tab = tk.Button(self.tabs, text='Point Spread Function', font=('Aria',18),)
+        self.confocal_tab = tk.Button(self.tabs, text='Confocal Rendering', font=('Aria',18),)
 
         # Data vis renders
         self.focus_stab = tk.Label(self.content_frame, text="TBD")

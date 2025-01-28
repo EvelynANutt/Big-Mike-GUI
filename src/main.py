@@ -7,7 +7,7 @@ from business.store import Store
 def main():
     # Create the main window & size
     window = tk.Tk()
-    window.title('Big Mike GUI')
+    window.title('Big Mike GUI - Observation Deck')
     window.geometry('1200x800')
 
     # Create the store
