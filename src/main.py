@@ -13,15 +13,15 @@ def main():
     # Create the store
     store = Store()
     
-    # # Create the header
+    # Create the header
     header = Header(window)
     header.render()
 
-    # # Create the body
+    # Create the body
     body = Body(window, store)
     body.render()
     
-    # # Start the GUI event loop
+    # Start the GUI event loop
     window.mainloop()
 
 if __name__ == "__main__":
