@@ -15,12 +15,16 @@ class LiveFeedPanel:
         self.frame = tk.Label(parent)
         self.vid_label = tk.Label(self.frame)
 
-        self.store.camera.subscribe(self.display_camera)
+        self.update()
 
-    def display_camera(self, camera_frame):
-        # Convert BGR (OpenCV) to RGB (PIL)
-        frame_rgb = camera_frame
-        # frame_rgb = cv2.cvtColor(camera_frame, cv2.COLOR_BGR2RGB)
+    def update(self):
+        self.display_camera()
+        self.frame.after(10, self.update)
+
+    def display_camera(self):
+        camera_frame = self.store.camera.get_frame()
+        if camera_frame is None:
+            return
 
         # Dynamically resize based on the current frame dimensions
         frame_width = self.frame.winfo_width()
@@ -38,7 +42,7 @@ class LiveFeedPanel:
 
             if new_height > 0:
                 # Resize the frame
-                resized_frame = cv2.flip(cv2.resize(frame_rgb, (new_width, new_height)), 1)
+                resized_frame = cv2.flip(cv2.resize(camera_frame, (new_width, new_height)), 1)
 
                 # Convert the resized frame to an ImageTk object
                 img = ImageTk.PhotoImage(image=Image.fromarray(resized_frame))
