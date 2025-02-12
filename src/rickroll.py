@@ -56,7 +56,9 @@ root = tk.Tk()
 root.title("Camera Control")
 
 # Initialize the application with a video file
-video_source = 'rickroll.mp4'  # Replace with your MP4 file path
+video_source = '/Users/evelynanutt/GitHub/Big-Mike-GUI/rickroll.mp4'  # Replace with your MP4 file path
+# Mac: /Users/evelynanutt/GitHub/Big-Mike-GUI/rickroll.mp4
+# Windows: ../rickroll.mp4
 app = CameraApp(root, video_source)
 
 # Start the GUI loop
