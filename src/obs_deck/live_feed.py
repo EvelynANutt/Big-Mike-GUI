@@ -19,7 +19,8 @@ class LiveFeedPanel:
 
     def display_camera(self, camera_frame):
         # Convert BGR (OpenCV) to RGB (PIL)
-        frame_rgb = cv2.cvtColor(camera_frame, cv2.COLOR_BGR2RGB)
+        frame_rgb = camera_frame
+        # frame_rgb = cv2.cvtColor(camera_frame, cv2.COLOR_BGR2RGB)
 
         # Dynamically resize based on the current frame dimensions
         frame_width = self.frame.winfo_width()
