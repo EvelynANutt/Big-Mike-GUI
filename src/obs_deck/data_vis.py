@@ -1,6 +1,6 @@
 """ Data vis tabs """
 import tkinter as tk
-from obs_deck.data_vis_tabs.histogram import Histogram
+# from obs_deck.data_vis_tabs.histogram import Histogram
 
 class DataVisPanel:
     frame: tk.Frame
@@ -16,7 +16,7 @@ class DataVisPanel:
 
     def render_histogram(self):
         self.clear_content_frame()
-        self.histogram.render()
+        # self.histogram.render()
 
     def __init__(self, parent, store):
         # Store the store
@@ -36,7 +36,7 @@ class DataVisPanel:
 
         # Data vis renders
         self.focus_stab = tk.Label(self.content_frame, text="TBD")
-        self.histogram = Histogram(self.content_frame, store)
+        # self.histogram = Histogram(self.content_frame, store)
 
     def render(self):
         self.focus_stab_tab.pack(side='left', fill='x', expand=True)

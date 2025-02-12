@@ -7,8 +7,11 @@ name = "pypi"
 opencv-python = "*"
 matplotlib = "*"
 pillow = "*"
+spinnaker-python = {file = "spinnaker_python-4.0.0.116-cp310-cp310-win_amd64\\spinnaker_python-4.0.0.116-cp310-cp310-win_amd64.whl"}
+numpy = "~=1.9"
 
 [dev-packages]
+ipykernel = "*"
 
 [requires]
-python_version = "3.12.2"
+python_version = "3.10.15"

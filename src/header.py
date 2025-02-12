@@ -31,7 +31,7 @@ class Header:
         self.frame = tk.Frame(parent)
 
         # Logo label
-        logo_img = Image.open('/Users/evelynanutt/GitHub/Big-Mike-GUI/src/bigmike_logo.png')
+        logo_img = Image.open('bigmike_logo.png')
         self.logo_img = ImageTk.PhotoImage(logo_img.resize((100,100)))
         self.logo = tk.Label(self.frame, image=self.logo_img)
 
