@@ -10,9 +10,9 @@ class CapturePanel:
 
     def picture_popup(self):
         try:
-            # Convert latest frame as BGR -> RBG -> .png
-            image_rgb = cv2.cvtColor(self.store.camera.get_frame(), cv2.COLOR_BGR2RGB)
-            image_png = Image.fromarray(image_rgb)
+            # Convert latest frame as RBG -> .png
+            image_rgb = self.store.camera.get_frame()
+            image_png = Image.fromarray(image_rgb, mode="I;16")
             # Prompt save as window
             file_path = filedialog.asksaveasfilename(initialfile="Untitled", defaultextension='.png')
             image_png.save(file_path)

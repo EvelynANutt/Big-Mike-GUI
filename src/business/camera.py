@@ -1,7 +1,6 @@
 import cv2
 from threading import Thread, Event, Lock
 from typing import Callable
-import numpy as np
 import PySpin
 import time
 import queue
@@ -87,8 +86,6 @@ class Camera:
 
                     # Safely iterate through subscriptions with the lock
                     with self.lock:
-                        if image_rgb.dtype == np.uint16:
-                            image_rgb = (image_rgb / 256).astype(np.uint8)
                         self.frame = image_rgb
                         for subscription in self.subscriptions:
                             subscription(image_rgb)

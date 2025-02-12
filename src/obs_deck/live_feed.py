@@ -3,6 +3,7 @@ import tkinter as tk
 import cv2
 from PIL import Image, ImageTk
 from business.store import Store
+import numpy as np
 
 class LiveFeedPanel:
     frame: tk.Frame
@@ -43,6 +44,9 @@ class LiveFeedPanel:
             if new_height > 0:
                 # Resize the frame
                 resized_frame = cv2.flip(cv2.resize(camera_frame, (new_width, new_height)), 1)
+                
+                if resized_frame.dtype == np.uint16:
+                    resized_frame = (resized_frame / 256).astype(np.uint8)
 
                 # Convert the resized frame to an ImageTk object
                 img = ImageTk.PhotoImage(image=Image.fromarray(resized_frame))
