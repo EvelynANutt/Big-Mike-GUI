@@ -6,21 +6,13 @@ class NumberInput:
     frame: tk.Frame
     title: str
 
-    def move_up(self):
-        new_value = float(self.value.get()) + 1
-        self.value.set(str(new_value))
-        self.command_set()
-    
-    def move_down(self):
-        new_value = float(self.value.get()) - 1
-        self.value.set(str(new_value))
-        self.command_set()
-
-    def __init__(self, parent, title, command_set: Callable):
+    def __init__(self, parent, title, command_set_up: Callable, command_set_down: Callable, command_set_abs: Callable):
         # Create frame
         self.frame = tk.Label(parent)
         self.title = title
-        self.command_set = command_set
+        self.command_set_up = command_set_up
+        self.command_set_down = command_set_down
+        self.command_set_abs = command_set_abs
 
         self.minus_button = tk.Button(self.frame, text='-', font=('Aria',16), command=self.move_down)
         self.value = tk.StringVar()
@@ -31,11 +23,21 @@ class NumberInput:
         self.number_entry.bind("<Key>", self.handle_enter)
         self.plus_button = tk.Button(self.frame, text='+', font=('Aria',16), command=self.move_up)
         self.title_label = tk.Label(self.frame, text=self.title, font=('Aria',20))
+
+    def move_up(self):
+        new_value = float(self.value.get()) + 1
+        self.value.set(str(new_value))
+        self.command_set_up()
+    
+    def move_down(self):
+        new_value = float(self.value.get()) - 1
+        self.value.set(str(new_value))
+        self.command_set_down()
         
-    def on_focus_in(self, event):
+    def on_focus_in(self):
         self.old_value = self.value.get()
 
-    def on_focus_out(self, event):
+    def on_focus_out(self):
         self.value.set(self.old_value)
 
     def handle_enter(self, event: tk.Event):
@@ -48,7 +50,7 @@ class NumberInput:
                 self.value.set(self.old_value)
             else:
                 self.old_value = self.value.get()
-                self.command_set()
+                self.command_set_abs()
 
     def render(self):
         self.minus_button.pack(side='left')
