@@ -2,7 +2,6 @@ import cv2
 from threading import Thread, Event, Lock
 from typing import Callable
 import PySpin
-import time
 import queue
 
 # def calculate_focus_score(image,blur):
@@ -112,7 +111,7 @@ class Camera:
         self.stop()
         cv2.destroyAllWindows()
 
-if __name__ == "__main__":
-    import time
-    app = Camera()
-    time.sleep(10)
+# if __name__ == "__main__":
+#     import time
+#     app = Camera()
+#     time.sleep(10)
