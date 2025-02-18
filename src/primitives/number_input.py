@@ -6,7 +6,7 @@ class NumberInput:
     frame: tk.Frame
     title: str
 
-    def __init__(self, parent, title, command_set_up: Callable, command_set_down: Callable, command_set_abs: Callable, default_entry=0.0):
+    def __init__(self, parent, title, command_set_up: Callable, command_set_down: Callable, command_set_abs: Callable, default_entry=0.0, increment=1):
         # Create frame
         self.frame = tk.Label(parent)
         self.title = title
@@ -14,6 +14,7 @@ class NumberInput:
         self.command_set_down = command_set_down
         self.command_set_abs = command_set_abs
 
+        self.increment = increment
         self.minus_button = tk.Button(self.frame, text='-', font=('Aria',16), command=self.move_down)
         self.value = tk.StringVar()
         self.value.set(str(default_entry))
@@ -25,12 +26,12 @@ class NumberInput:
         self.title_label = tk.Label(self.frame, text=self.title, font=('Aria',20))
 
     def move_up(self):
-        new_value = float(self.value.get()) + 1
+        new_value = float(self.value.get()) + self.increment
         self.value.set(str(new_value))
         self.command_set_up()
     
     def move_down(self):
-        new_value = float(self.value.get()) - 1
+        new_value = float(self.value.get()) - self.increment
         self.value.set(str(new_value))
         self.command_set_down()
         

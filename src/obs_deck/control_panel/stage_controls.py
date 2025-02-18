@@ -1,6 +1,6 @@
 """ Stage control """
 import tkinter as tk
-from primitives.number_input import NumberInput
+from obs_deck.control_panel.stage_control_input import StageControlInput
 from business.store import Store
 
 class StageControlPanel:
@@ -18,18 +18,9 @@ class StageControlPanel:
         self.title = tk.Label(self.header, text='Stage Controls', font=('Aria',26))
 
         # xyz translation and xy cropping names
-        self.x_trans_input = NumberInput(self.frame, default_entry=self.store.attocube.xpos, title='x [nm]', 
-                                         command_set_up=lambda: self.store.attocube.increment_up(0), 
-                                         command_set_down=lambda: self.store.attocube.increment_down(0), 
-                                         command_set_abs=lambda: self.store.attocube.move(0,0))
-        self.y_trans_input = NumberInput(self.frame, default_entry=self.store.attocube.ypos, title='y [nm]', 
-                                         command_set_up=lambda: self.store.attocube.increment_up(1), 
-                                         command_set_down=lambda: self.store.attocube.increment_down(1), 
-                                         command_set_abs=lambda: self.store.attocube.move(1,0))
-        self.z_trans_input = NumberInput(self.frame, default_entry=self.store.attocube.zpos, title='z [nm]', 
-                                         command_set_up=lambda: self.store.attocube.increment_up(2), 
-                                         command_set_down=lambda: self.store.attocube.increment_down(2), 
-                                         command_set_abs=lambda: self.store.attocube.move(2,0))
+        self.x_trans_input = StageControlInput(self.frame, self.store, dim=0)
+        self.y_trans_input = StageControlInput(self.frame, self.store, dim=1)
+        self.z_trans_input = StageControlInput(self.frame, self.store, dim=2)
 
     def render(self):
         self.title.pack(side='left', expand=True)
