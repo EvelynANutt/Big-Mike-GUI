@@ -36,15 +36,18 @@ class CameraSettingsPanel:
 
     def update_exposure(self):
         value = float(self.exposure_input.value.get())
-        self.store.camera.set_exposure_value(value)
+        print(value)
+        #self.store.camera.set_exposure_value(value)
 
     def update_frame_rate(self):
         value = float(self.frame_rate_input.value.get())
-        self.store.camera.set_frame_rate_value(value)
+        print(value)
+        # self.store.camera.set_frame_rate_value(value)
 
     def update_gain(self):
         value = float(self.gain_input.value.get())
-        self.store.camera.set_gain_value(value)
+        print(value)
+        # self.store.camera.set_gain_value(value)
 
     def render(self):
         self.title.pack(side='left', expand=True)

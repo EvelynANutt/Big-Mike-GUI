@@ -3,6 +3,7 @@ from threading import Thread, Event, Lock
 from typing import Callable
 import PySpin
 import queue
+import time
 
 # def calculate_focus_score(image,blur):
 #     image_filtered=cv2.medianBlur(image,blur)
@@ -36,8 +37,8 @@ class Camera:
             return self.frame
 
     def cam_connect_setup(self):
+        time.sleep(1)
         # FLIR camera setup
-        #global cam
         self.cam.PixelFormat.SetValue(PySpin.PixelFormat_Mono16)
         self.cam.GainAuto.SetValue(PySpin.GainAuto_Off)
         # Set gain to 0 dB
@@ -48,6 +49,7 @@ class Camera:
         # Set exposure time to n microseconds
         self.cam.ExposureTime.SetValue(self.exposure)
         # self.cam.AcquisitionFrameRateEnable.SetValue(False)
+        # time.sleep(1)
         self.cam.AcquisitionFrameRate.SetValue(self.frame_rate)
     
     def run_thread(self):
@@ -63,6 +65,9 @@ class Camera:
             print(f"Found {cam_list.GetSize()} camera(s)")
 
         self.cam = cam_list.GetByIndex(0)
+        if self.cam.IsInitialized():
+            print("DEINIT")
+            self.cam.DeInit()
         self.cam.Init()
 
         try:
@@ -103,15 +108,17 @@ class Camera:
         with self.lock:  # Lock access to the subscriptions set
             self.subscriptions.remove(callback)
 
-    def set_exposure_value(self, new_value: float):
-        self.cam.ExposureTime.SetValue(new_value)
-        self.exposure = self.cam.ExposureTime.GetValue()
+    # def set_exposure_value(self, new_value: float):
+    #     self.cam.ExposureTime.SetValue(new_value)
+    #     self.exposure = new_value
 
-    def set_frame_rate_value(self, new_value: float):
-        self.cam.AcquisitionFrameRate.SetValue(new_value)
+    # def set_frame_rate_value(self, new_value: float):
+    #     self.cam.AcquisitionFrameRate.SetValue(new_value)
+    #     self.frame_rate = new_value
 
-    def set_gain_value(self, new_value: float):
-        self.cam.Gain.SetValue(new_value)
+    # def set_gain_value(self, new_value: float):
+    #     self.cam.Gain.SetValue(new_value)
+    #     self.gain = new_value
 
     def stop(self):
         self.running.clear()
