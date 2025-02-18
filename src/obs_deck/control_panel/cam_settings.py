@@ -17,9 +17,12 @@ class CameraSettingsPanel:
         self.title = tk.Label(self.header, text='Camera Settings', font=('Aria',26))
 
         # Exposure, frame rate, and cropping names
-        self.exposure_input = NumberInput(self.frame, title='Exposure time [ms]', command_set=None)
-        self.frame_rate_input = NumberInput(self.frame, title='Frame rate [?]', command_set=None)
-        self.cropping_input = NumberInput(self.frame, title='Cropping [?]', command_set=None)
+        self.exposure_input = NumberInput(self.frame, title='Exposure time [ms]', command_set_up=None, 
+                                          command_set_down=None, command_set_abs=None)
+        self.frame_rate_input = NumberInput(self.frame, title='Frame rate [?]', command_set_up=None, 
+                                            command_set_down=None, command_set_abs=None)
+        self.cropping_input = NumberInput(self.frame, title='Cropping [?]', command_set_up=None, 
+                                          command_set_down=None, command_set_abs=None)
 
     def render(self):
         self.title.pack(side='left', expand=True)

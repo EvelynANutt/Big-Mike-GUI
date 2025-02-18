@@ -5,22 +5,10 @@ from primitives.number_input import NumberInput
 class StageControlPanel:
     frame: tk.Frame
 
-    def command_set_x(self):
-        print(self.x_trans_input.value.get())
-        # Put attocube control code here!
-
-    def command_set_y(self):
-        print(self.y_trans_input.value.get())
-        # Put attocube control code here!
-            
-    def command_set_z(self):
-        print(self.z_trans_input.value.get())
-        # Put attocube control code here!
-
     def __init__(self, parent, store):
         # Store the store
         self.store = store
-        
+
         # Create frame
         self.frame = tk.Label(parent, borderwidth=5, relief='solid')
 
@@ -29,9 +17,12 @@ class StageControlPanel:
         self.title = tk.Label(self.header, text='Stage Controls', font=('Aria',26))
 
         # xyz translation and xy cropping names
-        self.x_trans_input = NumberInput(self.frame, title='x [um]', command_set=self.command_set_x)
-        self.y_trans_input = NumberInput(self.frame, title='y [um]', command_set=self.command_set_y)
-        self.z_trans_input = NumberInput(self.frame, title='z [um]', command_set=self.command_set_z)
+        self.x_trans_input = NumberInput(self.frame, title='x [um]', command_set_up=self.store.attocube.increment_up(0), 
+                                         command_set_down=self.store.attocube.increment_down(0), command_set_abs=self.store.attocube.move(0))
+        self.y_trans_input = NumberInput(self.frame, title='y [um]', command_set_up=self.store.attocube.increment_up(1), 
+                                         command_set_down=self.store.attocube.increment_down(1), command_set_abs=self.store.attocube.move(1))
+        self.z_trans_input = NumberInput(self.frame, title='z [um]', command_set_up=self.store.attocube.increment_up(2), 
+                                         command_set_down=self.store.attocube.increment_down(2), command_set_abs=self.store.attocube.move(2))
 
     def render(self):
         self.title.pack(side='left', expand=True)
