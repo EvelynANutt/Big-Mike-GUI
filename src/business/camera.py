@@ -47,7 +47,7 @@ class Camera:
         self.cam.ExposureMode.SetValue(PySpin.ExposureMode_Timed)
         # Set exposure time to n microseconds
         self.cam.ExposureTime.SetValue(self.exposure)
-        #self.cam.AcquisitionFrameRateEnable.SetValue(False)
+        # self.cam.AcquisitionFrameRateEnable.SetValue(False)
         self.cam.AcquisitionFrameRate.SetValue(self.frame_rate)
     
     def run_thread(self):
@@ -102,6 +102,16 @@ class Camera:
     def unsubscribe(self, callback: Callable):
         with self.lock:  # Lock access to the subscriptions set
             self.subscriptions.remove(callback)
+
+    def set_exposure_value(self, new_value: float):
+        self.cam.ExposureTime.SetValue(new_value)
+        self.exposure = self.cam.ExposureTime.GetValue()
+
+    def set_frame_rate_value(self, new_value: float):
+        self.cam.AcquisitionFrameRate.SetValue(new_value)
+
+    def set_gain_value(self, new_value: float):
+        self.cam.Gain.SetValue(new_value)
 
     def stop(self):
         self.running.clear()
