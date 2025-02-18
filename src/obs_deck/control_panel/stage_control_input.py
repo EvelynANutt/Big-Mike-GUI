@@ -14,31 +14,29 @@ class StageControlInput:
 
     def __init__(self, parent, store: Store, dim: int):
         # Store the store
+        self.parent = parent
         self.store = store
         self.dim = dim
         self.scale = 1000
 
-        # Create frame
-        self.frame = tk.Label(parent, borderwidth=5, relief='solid')
-
-        # Header frame
-        self.header = tk.Frame(self.frame)
-        self.title = tk.Label(self.header, text='Stage Controls', font=('Aria',26))
-
         # xyz translation and xy cropping names
-        self.input = NumberInput(self.frame, 
+        self.input = NumberInput(parent, 
                                  default_entry=self.store.attocube.get_value(dim), 
                                  title=f'{dim_to_letter[dim]} [nm]', 
                                  command_set_up=self.update, 
                                  command_set_down=self.update, 
                                  command_set_abs=self.update,
                                  increment=self.scale)
+        self.sync()
 
     def update(self):
         value = float(self.input.value.get())
         self.store.attocube.set_value(self.dim, value)
+        
+    def sync(self):
         new_value = self.store.attocube.get_value(self.dim)
         self.input.value.set(str(new_value))
+        self.parent.after(1000, self.sync)
 
     def render(self):
         self.input.render()

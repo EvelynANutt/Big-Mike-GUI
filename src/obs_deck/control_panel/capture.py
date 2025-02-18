@@ -51,7 +51,7 @@ class CapturePanel:
         # Take picture and take video buttons
         self.picture_button = tk.Button(self.frame, text='📷', font=('Aria',24), command=self.picture_popup)
         self.play_button = tk.Button(self.frame, text='▶', font=('Aria',24), command=None) #self.play_video)
-        self.stop_button = tk.Button(self.frame, text='⏹', font=('Aria',24), command=None) #self.stop_video)
+        self.stop_button = tk.Button(self.frame, text='■', font=('Aria',24), command=None) #self.stop_video)
         # self.video_time_name = tk.Label(self.frame, text='Video Time: ', font=('Aria', 16))
         # self.video_timestamp = 
 
