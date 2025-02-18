@@ -1,5 +1,6 @@
 {
     "python.analysis.extraPaths": [
         "./src"
-    ]
+    ],
+    "python.defaultInterpreterPath": "C:\\Users\\bigmi\\anaconda3\\envs\\bigmike\\python.exe"
 }
