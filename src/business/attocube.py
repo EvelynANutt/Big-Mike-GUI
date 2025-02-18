@@ -1,7 +1,5 @@
-import cv2
 from threading import Thread, Event, Lock
 from typing import Callable
-import PySpin
 import time
 from . import AMC
 import time
