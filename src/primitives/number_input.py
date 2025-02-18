@@ -6,7 +6,7 @@ class NumberInput:
     frame: tk.Frame
     title: str
 
-    def __init__(self, parent, title, command_set_up: Callable, command_set_down: Callable, command_set_abs: Callable):
+    def __init__(self, parent, title, command_set_up: Callable, command_set_down: Callable, command_set_abs: Callable, default_entry=0.0):
         # Create frame
         self.frame = tk.Label(parent)
         self.title = title
@@ -16,7 +16,7 @@ class NumberInput:
 
         self.minus_button = tk.Button(self.frame, text='-', font=('Aria',16), command=self.move_down)
         self.value = tk.StringVar()
-        self.value.set("0.0")
+        self.value.set(str(default_entry))
         self.number_entry = tk.Entry(self.frame, justify='center', textvariable=self.value, font=('Aria',20))
         self.number_entry.bind("<FocusIn>", self.on_focus_in)
         self.number_entry.bind("<FocusOut>", self.on_focus_out)
