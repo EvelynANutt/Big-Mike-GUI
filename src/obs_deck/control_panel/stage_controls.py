@@ -1,11 +1,12 @@
 """ Stage control """
 import tkinter as tk
 from primitives.number_input import NumberInput
+from business.store import Store
 
 class StageControlPanel:
     frame: tk.Frame
 
-    def __init__(self, parent, store):
+    def __init__(self, parent, store: Store):
         # Store the store
         self.store = store
 
