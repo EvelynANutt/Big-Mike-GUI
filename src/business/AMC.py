@@ -1,21 +1,19 @@
-import ACS
-#import test
-#from .test import Test
-from system_service import System_service
-from diagnostic import Diagnostic
-from network import Network
-from res import Res
-from description import Description
-from access import Access
-from move import Move
-from rotcomp import Rotcomp
-from update import Update
-from status import Status
-from control import Control
-from amcids import Amcids
-from rtin import Rtin
-from about import About
-from rtout import Rtout
+from . import ACS
+from .system_service import System_service
+from .diagnostic import Diagnostic
+from .network import Network
+from .res import Res
+from .description import Description
+from .access import Access
+from .move import Move
+from .rotcomp import Rotcomp
+from .update import Update
+from .status import Status
+from .control import Control
+from .amcids import Amcids
+from .rtin import Rtin
+from .about import About
+from .rtout import Rtout
 
 #Test = test.Test
 
