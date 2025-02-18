@@ -35,10 +35,10 @@ class NumberInput:
         self.value.set(str(new_value))
         self.command_set_down()
         
-    def on_focus_in(self):
+    def on_focus_in(self, _):
         self.old_value = self.value.get()
 
-    def on_focus_out(self):
+    def on_focus_out(self, _):
         self.value.set(self.old_value)
 
     def handle_enter(self, event: tk.Event):

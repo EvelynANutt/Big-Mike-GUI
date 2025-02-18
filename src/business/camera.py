@@ -50,7 +50,7 @@ class Camera:
         self.cam.ExposureTime.SetValue(self.exposure)
         # self.cam.AcquisitionFrameRateEnable.SetValue(False)
         # time.sleep(1)
-        self.cam.AcquisitionFrameRate.SetValue(self.frame_rate)
+        # self.cam.AcquisitionFrameRate.SetValue(self.frame_rate)
     
     def run_thread(self):
         # Initialize camera system
@@ -108,17 +108,18 @@ class Camera:
         with self.lock:  # Lock access to the subscriptions set
             self.subscriptions.remove(callback)
 
-    # def set_exposure_value(self, new_value: float):
-    #     self.cam.ExposureTime.SetValue(new_value)
-    #     self.exposure = new_value
+    def set_exposure_value(self, new_value: float):
+        self.cam.ExposureTime.SetValue(new_value)
+        # print("Recieved: ", self.cam.GetExposureTime())
+        self.exposure = new_value
 
     # def set_frame_rate_value(self, new_value: float):
     #     self.cam.AcquisitionFrameRate.SetValue(new_value)
     #     self.frame_rate = new_value
 
-    # def set_gain_value(self, new_value: float):
-    #     self.cam.Gain.SetValue(new_value)
-    #     self.gain = new_value
+    def set_gain_value(self, new_value: float):
+        self.cam.Gain.SetValue(new_value)
+        self.gain = new_value
 
     def stop(self):
         self.running.clear()

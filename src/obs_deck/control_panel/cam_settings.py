@@ -23,11 +23,11 @@ class CameraSettingsPanel:
                                           command_set_up=self.update_exposure, 
                                           command_set_down=self.update_exposure, 
                                           command_set_abs=self.update_exposure)
-        self.frame_rate_input = NumberInput(self.frame, default_entry=store.camera.frame_rate,
-                                            title='Frame rate [fps]', 
-                                            command_set_up=self.update_frame_rate, 
-                                            command_set_down=self.update_frame_rate, 
-                                            command_set_abs=self.update_frame_rate)
+        # self.frame_rate_input = NumberInput(self.frame, default_entry=store.camera.frame_rate,
+        #                                     title='Frame rate [fps]', 
+        #                                     command_set_up=self.update_frame_rate, 
+        #                                     command_set_down=self.update_frame_rate, 
+        #                                     command_set_abs=self.update_frame_rate)
         self.gain_input = NumberInput(self.frame, 
                                       title='Gain [dB]', default_entry=store.camera.gain,
                                       command_set_up=self.update_gain, 
@@ -36,23 +36,21 @@ class CameraSettingsPanel:
 
     def update_exposure(self):
         value = float(self.exposure_input.value.get())
-        print(value)
-        #self.store.camera.set_exposure_value(value)
+        self.store.camera.set_exposure_value(value)
 
-    def update_frame_rate(self):
-        value = float(self.frame_rate_input.value.get())
-        print(value)
-        # self.store.camera.set_frame_rate_value(value)
+    # def update_frame_rate(self):
+    #     value = float(self.frame_rate_input.value.get())
+    #     print(value)
+    #     self.store.camera.set_frame_rate_value(value)
 
     def update_gain(self):
         value = float(self.gain_input.value.get())
-        print(value)
-        # self.store.camera.set_gain_value(value)
+        self.store.camera.set_gain_value(value)
 
     def render(self):
         self.title.pack(side='left', expand=True)
         self.header.pack(fill='x')
         self.exposure_input.render()
-        self.frame_rate_input.render()
+        # self.frame_rate_input.render()
         self.gain_input.render()
         self.frame.pack(fill='both')
