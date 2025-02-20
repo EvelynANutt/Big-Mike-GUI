@@ -4,17 +4,7 @@ import os
 
 import cv2
 import numpy as np
-import io
-import base64
-from nicegui import ui
-import threading
-import time
-import plotly.graph_objs as go
-from PIL import Image as PILImage
-from io import BytesIO
-import PySpin
-import sys
-sys.path.append("./")
+from PIL import Image
 from scipy.optimize import curve_fit
 from scipy.signal import find_peaks
 from scipy.ndimage import uniform_filter1d

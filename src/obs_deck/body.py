@@ -13,11 +13,11 @@ class Body:
         # Create frame
         self.frame = tk.Frame(parent)
 
-        # Right panel 
-        self.right_panel = RightPanel(self.frame, self.store)
-
         # Left panel 
         self.left_panel = LeftPanel(self.frame, self.store)
+
+        # Right panel 
+        self.right_panel = RightPanel(self.frame, self.store)
 
     def render(self):
         self.left_panel.render()
