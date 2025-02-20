@@ -18,99 +18,17 @@ sys.path.append("./")
 from scipy.optimize import curve_fit
 from scipy.signal import find_peaks
 from scipy.ndimage import uniform_filter1d
-import AMC
-import NiceGUIfunctions as NG
-device=AMC.Device('192.168.1.1')
-device.connect()
 
-
-
-# Initial data for the plot
-x_data = np.array([0])
-y_data = np.array([0])
-focus_x = np.array([0])
-focus_y = np.array([0])
-y_max = 0
-frame_rate = 5
+# Contrast for focus stab:
 contrast_threshold = 0.7
+
 #2000 works well for 10x. 200 for 100x,300 was used for 40x - will use 750 for 20x
-step=1000
-savefigs = True
-save_n_frames = 25
-folder = "C:/Users/bigmi/OneDrive/Desktop/Kyle/20250213-PC1836/AutofocusExpt-Continued6/"
-z_lim= 25000
+step=1000 # distance to look for max contrast
+z_lim= 25000 # if we move too far, turn autofocus off
 
 #these variables are for the xy positions of the upper left corner and lower right corner
-fx1,fy1,fx2,fy2 = 540,120,650,200
+fx1,fy1,fx2,fy2 = 540,120,650,200 # rectangle for autofocusing region, turn into draggable rectangle
 focus_stab = True
-
-
-
-
-system = PySpin.System.GetInstance()
-cam_list = system.GetCameras()
-num_Cameras = cam_list.GetSize()
-
-for i, cam in enumerate(cam_list):
-    cam.Init()
-print(cam_list)
-
-cam = cam_list[0]
-
-
-
-
-
-
-NG.cam_connect_setup(cam)
-NG.configure_continuous_acquisition(cam)
-cam.BeginAcquisition()
-current_z = device.control.getPositionsAndVoltages()[2]
-# Create a figure using Plotly
-fig = go.Figure(
-    data=[go.Scatter(x=x_data, y=y_data, mode='lines', name='Sine Wave')],
-    layout=go.Layout(
-        title='Live Updating Plot',
-        xaxis=dict(title='Time'),
-        yaxis=dict(title='Amplitude'),
-    )
-)
-
-fig.add_shape(type='line',
-                x0=0,
-                y0=y_max,
-                x1=1,
-                y1=y_max,
-                line=dict(color='Red',),
-                xref='paper',
-                yref='y'
-)
-
-fig2 = go.Figure(
-    data=[go.Scatter(x=focus_x, y=focus_y, mode='lines', name='Sine Wave')],
-    layout=go.Layout(
-        title='Live Updating Plot',
-        xaxis=dict(title='Time'),
-        yaxis=dict(title='Amplitude'),
-    )
-)
-
-fig2.add_shape(type='line',
-                x0=0,
-                y0=y_max,
-                x1=1,
-                y1=y_max,
-                line=dict(color='Red',),
-                xref='paper',
-                yref='y'
-)
-
-# Create a plotly figure to display in NiceGUI
-plot_element = ui.plotly(fig)
-plot_element2 = ui.plotly(fig2)
-
-# Function to generate random image (simulating a video feed)
-
 
 
 def update_image2():
@@ -123,33 +41,9 @@ def update_image2():
     print("Acquisition started. Press 'q' to quit.")
 
     # Track the frame rate to match the camera's frame rate
-    frame_time = 1.0 / frame_rate  # Time between frames (in seconds)
-    last_time = time.time()
+    
     counter = 0
     while True:
-        current_time = time.time()
-
-        # Retrieve the next image
-        image_result = cam.GetNextImage()#15000)  # Timeout in milliseconds
-
-        if image_result.IsIncomplete():
-            print(f"Image incomplete with status {image_result.GetImageStatus()}")
-            image_result.Release()
-            continue
-
-        # Convert image to a NumPy array
-        image_data = image_result.GetNDArray()
-
-
-        # Wait for the right amount of time to maintain the frame rate
-        
-
-        # Break on 'q' key press
-
-        
-        # Stop acquisition
-        
-    # Close OpenCV window when finished
         
         contrast = NG.calculate_focus_score(image_data[fy1:fy2,fx1:fx2],5)
 
@@ -164,99 +58,84 @@ def update_image2():
         if contrast > y_max:
             y_max = contrast
 
-
+        # Draw rectangle of focus area over live feed in GUI
         p_data = cv2.rectangle(np.copy(image_data), (fx1,fy1), (fx2,fy2), (2**16-1,2**16-1,2**16-1), 2)
-        
-        p_data_r =cv2.resize(p_data, (1152,720))
-
+        p_data_r =cv2.resize(p_data, (1152,720)) # Resizing Nice GUI window
         #cv2.imshow("Camera Feed", image_data)
         cv2.imshow("Camera Feed", p_data)
 
+        # Decide when to make focus_stab == True after it becomes false
         if contrast < contrast_threshold * y_max and focus_stab == True:
-            #try:
-            #x_focus, y_focus, current_z = focus_scan(2000,frame_time,last_time)
             
             print("entering focus scan!")
-
             image_result.Release()
 
             curr_z = device.control.getPositionsAndVoltages()[2]
-            #print('a')
-            steps = np.linspace(curr_z-10*step,curr_z+10*step,21)
-            #print('b')
-            
-            
+            steps = np.linspace(curr_z-10*step,curr_z+10*step,21) # Defining range to sample contrast
 
+            # Keep track of focus scores
             focus_score = np.array([])
-            print('c')
+
+            # Loop over all the steps so we can calculate focus scores
             for i in range(len(steps)):
 
                 current_time = time.time()
 
+                # Move to new z position
                 device.move.setControlTargetPosition(2,steps[i])
-                #print('d')
                 time.sleep(0.16)
 
                 image_result = cam.GetNextImage(2000)#15000)  # Timeout in milliseconds
-                #print('e')
                 if image_result.IsIncomplete():
                     print(f"Image incomplete with status {image_result.GetImageStatus()}")
                     image_result.Release()
                     continue
-
                 # Convert image to a NumPy array
                 image_data = image_result.GetNDArray()
 
-                #cv.imshow("Camera Feed", image_data)
-                    
-                    
-                    #cv.axvline(500)
-                    # Release the image
-                
+                # Take the image and calculate focus score
                 fsc = NG.calculate_focus_score(image_data[fy1:fy2,fx1:fx2],5)
                 #print(fsc)
+
+                # Add to focus score record
                 focus_score = np.append(focus_score,fsc)
                 image_result.Release()
-                #plt.imshow(image_data)
-                #plt.show()
-                #image_data.Release()
-
+                # Buffer tracking
                 elapsed_time = current_time - last_time
                 sleep_time = max(0, frame_time - elapsed_time)
                 time.sleep(sleep_time)  # Sleep for the remaining time if needed
-
-
-
                 last_time = current_time
 
-            
-            
+            # Now we have all focus scores for 20 steps in z
             print('hooray')
             print(focus_score)
+            # Go back to where we started
             device.move.setControlTargetPosition(2,curr_z)
-
             time.sleep(0.2)
 
-
+            # Start finding max of the focus scores we got
             o = find_peaks(focus_score,width=1.5)
 
             if len(o[0] >= 1):
                 peaks_temp = []
+                # o[0] is the positions of the peaks
                 for i in o[0]:
                     print(i)
                     peaks_temp.append(focus_score[i])
+                # Find peak with max focus score
                 mi = np.argmax(peaks_temp)
                 print(o[0])
                 print(o[1])
                 print(mi)
 
+                # if peak with max focus score is also the most prominent peak
                 if o[1]['prominences'][mi] == max(o[1]['prominences']):
-
+                    
+                    # Define new finer target for sampling over smaller steps
                     fine_target_z = steps[o[0][mi]]
-
+                    # Go to that peak for new distribution
                     device.move.setControlTargetPosition(2,fine_target_z)
                     image_result = cam.GetNextImage(2000)#15000)  # Timeout in milliseconds
-                    #print('e')
                     if image_result.IsIncomplete():
                         print(f"Image incomplete with status {image_result.GetImageStatus()}")
                         image_result.Release()
@@ -264,49 +143,40 @@ def update_image2():
                     image_result.Release()
                     time.sleep(0.1)
 
+                    # Define steps of finer distribution
                     steps_final = np.linspace(fine_target_z-step*2,fine_target_z+step*2,21)
-
+                    # Move to the beginning of the distribution
                     device.move.setControlTargetPosition(2,steps_final[0])
 
+                    # Buffer stuff
                     last_time = time.time()
-
                     for i in range(2):
                         current_time = time.time()
-
                         # Retrieve the next image
                         image_result = cam.GetNextImage()#15000)  # Timeout in milliseconds
-
                         if image_result.IsIncomplete():
                             print(f"Image incomplete with status {image_result.GetImageStatus()}")
                             image_result.Release()
                             continue
-
                         # Convert image to a NumPy array
                         image_data = image_result.GetNDArray()
                         image_result.Release()
-
-         
-
-
                         # Sleep for a short time before updating again
                         elapsed_time = current_time - last_time
                         sleep_time = max(0, frame_time - elapsed_time)
                         time.sleep(sleep_time)  # Sleep for the remaining time if needed
-
                         last_time = current_time
                     
-
+                    # Record for the finer distribution focus scores
                     focus_score_final = np.array([])
 
+                    # Get focus scores for finer distribution
                     for i in range(len(steps_final)):
-
                         current_time = time.time()
-
                         device.move.setControlTargetPosition(2,steps_final[i])
                         time.sleep(0.16)
 
                         image_result = cam.GetNextImage()#15000)  # Timeout in milliseconds
-
                         if image_result.IsIncomplete():
                             print(f"Image incomplete with status {image_result.GetImageStatus()}")
                             image_result.Release()
@@ -314,37 +184,30 @@ def update_image2():
 
                         # Convert image to a NumPy array
                         image_data = image_result.GetNDArray()
-
-                        #cv.imshow("Camera Feed", image_data)
-                            
-                            
-                            #cv.axvline(500)
-                            # Release the image
                         
+                        # Calculate focus score
                         fsc = NG.calculate_focus_score(image_data[fy1:fy2,fx1:fx2],5)
                         #print(fsc)
+
+                        # Add focus score to finer distribution record
                         focus_score_final = np.append(focus_score_final,fsc)
                         image_result.Release()
-                        #plt.imshow(image_data)
-                        #plt.show()
-                        #image_data.Release()
 
                         elapsed_time = current_time - last_time
                         sleep_time = max(0, frame_time - elapsed_time)
                         time.sleep(sleep_time)  # Sleep for the remaining time if needed
-
-
-
                         last_time = current_time
                 
-                
-                
+                    # Now we have record of finer distribution focus scores
                     print(focus_score_final)
                     
+                    # Steps for fitting & plotting the Gaussian
                     fitst = np.linspace(0,20,21)
 
+                    # Make the finer distribution into a more uniform Gaussian
                     focus_score_final_filt = uniform_filter1d(focus_score_final,3)
 
+                    # Find peaks of that uniform Gaussian
                     fsff_peaks = find_peaks(focus_score_final_filt,width=1.5)
                     print(fsff_peaks)
                     if len(fsff_peaks[0]) > 1:
@@ -352,16 +215,17 @@ def update_image2():
                         for i in fsff_peaks[0]:
                             print(i)
                             peaks_temp.append(focus_score_final_filt[i])
+                        # Find the peak with the greatest focus score
                         fsff_peak = fsff_peaks[0][np.argmax(peaks_temp)]
                     else:
                         fsff_peak = fsff_peaks[0][0]
 
-
+                    # Fit Gaussian to position of max focus score found with initial parameters of Gaussian to give to fitting function
                     initial_guesses = [0,10, max(focus_score_final_filt),10]
                     print(fsff_peak)
                     print(initial_guesses)
+                    # Define overall distribution as an accurate Gaussian
                     if fsff_peak >= 4 and fsff_peak <= 17:
-                    
                         params3, _ = curve_fit(NG.gauss, fitst[4:-4], focus_score_final_filt[4:-4], p0=initial_guesses)
                         print(params3)
                     elif fsff_peak < 4:
@@ -371,436 +235,34 @@ def update_image2():
                         diff = fitst - fsff_peak - 1
                         params3, _ = curve_fit(NG.gauss, fitst[8:], focus_score_final_filt[8:], p0=initial_guesses)
                         print(params3)
-
+                    
+                    # Position of peak z overall in nm
                     target_z = steps_final[0] + params3[1] * (steps_final[1]-steps_final[0])
+                    # Move there!
                     device.move.setControlTargetPosition(2,target_z)
 
+                    # Don't go too far out of range
                     if abs(target_z) > z_lim:
                         focus_stab=False 
 
-                    print('zoinks')
-                    fig2.data[0].x = fitst
-                    fig2.data[0].y = focus_score_final
-                    plot_element2.update()
-                    last_time = time.time()
-                    y_max = max(focus_score_final_filt)
+                    # Do the plotting here!!!
+
                     for i in range(2):
                         current_time = time.time()
-
                         # Retrieve the next image
                         image_result = cam.GetNextImage()#15000)  # Timeout in milliseconds
-
                         if image_result.IsIncomplete():
                             print(f"Image incomplete with status {image_result.GetImageStatus()}")
                             image_result.Release()
                             continue
-
                         # Convert image to a NumPy array
                         image_data = image_result.GetNDArray()
                         image_result.Release()
-
-         
-
-
                         # Sleep for a short time before updating again
                         elapsed_time = current_time - last_time
                         sleep_time = max(0, frame_time - elapsed_time)
                         time.sleep(sleep_time)  # Sleep for the remaining time if needed
-
                         last_time = current_time
-
-                    continue  #
-
-            else:
-
-            
-            
-                maxind = np.argmax(focus_score)
-                fitst = np.linspace(0,20,21)
-                # Initial guesses based on visual inspection 
-                #initial_guesses = [-5000,10,1000000]
-                initial_guesses = [min(focus_score),10, max(focus_score),4]
-
-                
-
-            # Fit the parabola
-                params, _ = curve_fit(NG.gauss, fitst, focus_score, p0=initial_guesses)
-                print(params)
-
-                rough_target_z = steps[0] + params[1] * (steps[1]-steps[0])
-                device.move.setControlTargetPosition(2,rough_target_z)
-
-
-                steps_fine = steps = np.linspace(rough_target_z-10*step/5,rough_target_z+10*step/5,21)
-                focus_score_fine = np.array([])
-                #time.sleep(0.2)
-                for i in range(len(steps_fine)):
-
-                    current_time = time.time()
-
-                    device.move.setControlTargetPosition(2,steps_fine[i])
-                    time.sleep(0.1)
-
-                    image_result = cam.GetNextImage()#15000)  # Timeout in milliseconds
-
-                    if image_result.IsIncomplete():
-                        print(f"Image incomplete with status {image_result.GetImageStatus()}")
-                        image_result.Release()
-                        continue
-
-                    # Convert image to a NumPy array
-                    image_data = image_result.GetNDArray()
-
-                    #cv.imshow("Camera Feed", image_data)
-                        
-                        
-                        #cv.axvline(500)
-                        # Release the image
-                    
-                    fsc = NG.calculate_focus_score(image_data[fy1:fy2,fx1:fx2],5)
-                    print(fsc)
-                    focus_score_fine = np.append(focus_score_fine,fsc)
-                    image_result.Release()
-                    #plt.imshow(image_data)
-                    #plt.show()
-                    #image_data.Release()
-
-                    elapsed_time = current_time - last_time
-                    sleep_time = max(0, frame_time - elapsed_time)
-                    time.sleep(sleep_time)  # Sleep for the remaining time if needed
-
-
-
-                    last_time = current_time
-
-                fine_target_z = steps_fine[np.argmax(focus_score_fine)]
-                steps_final = steps = np.linspace(fine_target_z-step/2,fine_target_z+step/2,21)
-                focus_score_final = np.array([])
-                for i in range(len(steps_final)):
-
-                    current_time = time.time()
-
-                    device.move.setControlTargetPosition(2,steps_final[i])
-                    time.sleep(0.1)
-
-                    image_result = cam.GetNextImage()#15000)  # Timeout in milliseconds
-
-                    if image_result.IsIncomplete():
-                        print(f"Image incomplete with status {image_result.GetImageStatus()}")
-                        image_result.Release()
-                        continue
-
-                    # Convert image to a NumPy array
-                    image_data = image_result.GetNDArray()
-
-                    #cv.imshow("Camera Feed", image_data)
-                        
-                        
-                        #cv.axvline(500)
-                        # Release the image
-                    
-                    fsc = NG.calculate_focus_score(image_data[fy1:fy2,fx1:fx2],5)
-                    print(fsc)
-                    focus_score_final = np.append(focus_score_final,fsc)
-                    image_result.Release()
-                    #plt.imshow(image_data)
-                    #plt.show()
-                    #image_data.Release()
-
-                    elapsed_time = current_time - last_time
-                    sleep_time = max(0, frame_time - elapsed_time)
-                    time.sleep(sleep_time)  # Sleep for the remaining time if needed
-
-
-
-                    last_time = current_time
-
-
-                #coefficients = np.polyfit(fitst,focus_score,2)
-                params2, _ = curve_fit(NG.gauss, fitst, focus_score_fine, p0=initial_guesses)
-                print(params2)
-
-                params3, _ = curve_fit(NG.gauss, fitst, focus_score_final, p0=initial_guesses)
-                print(params3)
-
-
-
-                target_z = steps_final[0] + params3[1] * (steps_final[1]-steps_final[0])
-                device.move.setControlTargetPosition(2,target_z)
-
-
-                print('zoinks')
-
-                if abs(target_z) > z_lim:
-                    focus_stab=False 
-
-                fig2.data[0].x = fitst
-                fig2.data[0].y = focus_score_final
-                plot_element2.update()
-                continue  #
-            #except:
-                #cam.EndAcquisition()
-                #cam.DeInit()
-            
-            
-            #fsdata = focus_scan(2000,frame_time,last_time)
-            #fig2.update_layout(shapes=[dict(type='line', y0=y_max, y1=y_max, x0=0, x1=1, xref='paper', yref='y')])
-        
-
-            # Update the plot with new data
-        
-
-            
-
-        if cv2.waitKey(1) & 0xFF == ord('q'):
-            break
-
-        
-        fig.update_layout(shapes=[dict(type='line', y0=y_max, y1=y_max, x0=0, x1=1, xref='paper', yref='y')])
-        
-
-        # Update the plot with new data
-        fig.data[0].x = x_data
-        fig.data[0].y = y_data
-        plot_element.update()  # This correctly triggers the update of the Plotly plot
-
-        if savefigs == True and counter % save_n_frames == 0:
-            savetime = np.round(time.time(),2)
-            filename = folder + str(counter) + '-' + str(savetime).split('.')[0] + 'p' + str(savetime).split('.')[1] +  '.pgm'
-            cv2.imwrite(filename,image_data)
-        
-        
-        image_result.Release()
-
-         
         counter += 1
-
-        # Sleep for a short time before updating again
-        elapsed_time = current_time - last_time
-        sleep_time = max(0, frame_time - elapsed_time)
-        time.sleep(sleep_time)  # Sleep for the remaining time if needed
-
-        last_time = current_time
-    try:
-        image_result.Release()
-    except:
-        print('No image to release')
-    cv2.destroyAllWindows()
-    cam.EndAcquisition()
-    print("Acquisition stopped.")
-    cam.DeInit()
-
-def focus_scan(step,frametime,lasttime):
-    global cam, device
-    print("entering focus scan!")
-    curr_z = device.control.getPositionsAndVoltages()[2]
-    #print('a')
-    steps = np.linspace(curr_z-10*step,curr_z+10*step,21)
-    #print('b')
+        continue
     
-    frame_time = frametime#1.0 / frame_rate  # Time between frames (in seconds)
-    last_time = lasttime
-
-    focus_score = np.array([])
-    #print('c')
-    for i in range(len(steps)):
-
-        current_time = time.time()
-
-        device.move.setControlTargetPosition(2,steps[i])
-        #print('d')
-        time.sleep(0.1)
-
-        image_result = cam.GetNextImage(2000)#15000)  # Timeout in milliseconds
-        #print('e')
-        if image_result.IsIncomplete():
-            print(f"Image incomplete with status {image_result.GetImageStatus()}")
-            image_result.Release()
-            continue
-
-        # Convert image to a NumPy array
-        image_data = image_result.GetNDArray()
-
-        #cv.imshow("Camera Feed", image_data)
-            
-            
-            #cv.axvline(500)
-            # Release the image
-        
-        fsc = calculate_focus_score(image_data[fy1:fy2,fx1:fx2],5)
-        #print(fsc)
-        focus_score = np.append(focus_score,fsc)
-        image_result.Release()
-        #plt.imshow(image_data)
-        #plt.show()
-        #image_data.Release()
-
-        elapsed_time = current_time - last_time
-        sleep_time = max(0, frame_time - elapsed_time)
-        time.sleep(sleep_time)  # Sleep for the remaining time if needed
-
-
-
-        last_time = current_time
-
-    
-    
-    print('hooray')
-    print(focus_score)
-    device.move.setControlTargetPosition(2,curr_z)
-
-    time.sleep(0.2)
-
-
-    maxind = np.argmax(focus_score)
-    fitst = np.linspace(0,20,21)
-    # Initial guesses based on visual inspection 
-    initial_guesses = [-5000,10,1000000]
-
-    
-
-# Fit the parabola
-    params, _ = curve_fit(NG.parabola, fitst, focus_score, p0=initial_guesses)
-    print(params)
-
-    rough_target_z = steps[0] + params[1] * (steps[1]-steps[0])
-    device.move.setControlTargetPosition(2,rough_target_z)
-
-
-    steps_fine = steps = np.linspace(rough_target_z-10*step/5,rough_target_z+10*step/5,21)
-    focus_score_fine = np.array([])
-    #time.sleep(0.2)
-    for i in range(len(steps_fine)):
-
-        current_time = time.time()
-
-        device.move.setControlTargetPosition(2,steps_fine[i])
-        time.sleep(0.1)
-
-        image_result = cam.GetNextImage()#15000)  # Timeout in milliseconds
-
-        if image_result.IsIncomplete():
-            print(f"Image incomplete with status {image_result.GetImageStatus()}")
-            image_result.Release()
-            continue
-
-        # Convert image to a NumPy array
-        image_data = image_result.GetNDArray()
-
-        #cv.imshow("Camera Feed", image_data)
-            
-            
-            #cv.axvline(500)
-            # Release the image
-        
-        fsc = calculate_focus_score(image_data[fy1:fy2,fx1:fx2],5)
-        print(fsc)
-        focus_score_fine = np.append(focus_score_fine,fsc)
-        image_result.Release()
-        #plt.imshow(image_data)
-        #plt.show()
-        #image_data.Release()
-
-        elapsed_time = current_time - last_time
-        sleep_time = max(0, frame_time - elapsed_time)
-        time.sleep(sleep_time)  # Sleep for the remaining time if needed
-
-
-
-        last_time = current_time
-
-    fine_target_z = steps_fine[np.argmax(focus_score_fine)]
-    steps_final = steps = np.linspace(fine_target_z-step/2,fine_target_z+step/2,21)
-    focus_score_final = np.array([])
-    for i in range(len(steps_final)):
-
-        current_time = time.time()
-
-        device.move.setControlTargetPosition(2,steps_final[i])
-        time.sleep(0.1)
-
-        image_result = cam.GetNextImage()#15000)  # Timeout in milliseconds
-
-        if image_result.IsIncomplete():
-            print(f"Image incomplete with status {image_result.GetImageStatus()}")
-            image_result.Release()
-            continue
-
-        # Convert image to a NumPy array
-        image_data = image_result.GetNDArray()
-
-        #cv.imshow("Camera Feed", image_data)
-            
-            
-            #cv.axvline(500)
-            # Release the image
-        
-        fsc = calculate_focus_score(image_data[fy1:fy2,fx1:fx2],5)
-        print(fsc)
-        focus_score_final = np.append(focus_score_final,fsc)
-        image_result.Release()
-        #plt.imshow(image_data)
-        #plt.show()
-        #image_data.Release()
-
-        elapsed_time = current_time - last_time
-        sleep_time = max(0, frame_time - elapsed_time)
-        time.sleep(sleep_time)  # Sleep for the remaining time if needed
-
-
-
-        last_time = current_time
-
-
-    #coefficients = np.polyfit(fitst,focus_score,2)
-    params2, _ = curve_fit(NG.parabola, fitst, focus_score_fine, p0=initial_guesses)
-    print(params2)
-
-    params3, _ = curve_fit(NG.parabola, fitst, focus_score_final, p0=initial_guesses)
-    print(params3)
-
-
-
-    target_z = steps_final[0] + params3[1] * (steps_final[1]-steps_final[0])
-    device.move.setControlTargetPosition(2,target_z)
-
-    return fitst, focus_score_final, target_z
-
-
-
-
-# Start the data update in a separate thread
-thread2 = threading.Thread(target=update_image2, daemon=True)
-thread2.start()
-
-# Create the NiceGUI layout
-def create_gui():
-    
-    # Use ui.column() and ui.row() directly without using .add()
-
-   # with ui.grid(columns=16).classes('w-full gap-0'):
-   #     plot_element.classes('col-span-8 border p-1')
-   #     plot_element2.classes('col-span-8 border p-1')
-    #    ui.label('8').classes('col-span-4 border p-1')
-   #     ui.button('bbbbbbbbbb me!', on_click=lambda: ui.notify('You clicked me!')).classes('col-span-4 border p-1')
-    #    ui.label('8').classes('col-span-8 border p-1')
-    with ui.row():
-        with ui.column():
-
-            plot_element
-    #    ui.button('bbbbbbbbbb me!', on_click=lambda: ui.notify('You clicked me!'))
-        with ui.column():
-            plot_element2
-
-        #with ui.column():
-         #   plot_element
-        #with ui.column():
-  
-            
-     
-
-    # Run the NiceGUI app
-    ui.run()
-
-# Run the NiceGUI app
-create_gui()
